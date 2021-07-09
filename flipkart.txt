@@ -1,0 +1,51 @@
+import requests
+from bs4 import BeautifulSoup
+import json
+import pandas as pd
+ 
+url = 'https://www.flipkart.com/tyy/4io/~cs-b6vm0rg6g5/pr?sid=tyy%2C4io&collection-tab-name=Samsung+Galaxy+F12&sort=price_asc&param=9987&otracker=clp_banner_1_17.bannerX3.BANNER_mobile-phones-store_Z57OQ3GYONZ9&fm=neo%2Fmerchandising&iid=M_30ea40f0-421e-4f89-a8e3-f34812f2c8a2_17.Z57OQ3GYONZ9&ssid=ls5o4oz2n40000001625822181464'
+ 
+res = requests.get(url).content
+ 
+soup = BeautifulSoup(res,'html.parser')
+ 
+titles = soup.find_all('div',class_='_4rR01T')
+ratings  =soup.find_all('div',class_='_3LWZlK')  
+prices  =soup.find_all('div',class_='_30jeq3 _1_WHN1') 
+ 
+mobiles = []
+m_ratings =[]
+m_prices =[]
+ 
+ 
+ 
+for title,rating,price in zip(titles,ratings,prices):
+    #print(c, title.text,rating.text,review.text,price.text)
+    mobiles.append(title.text)
+    m_ratings.append(rating.text)
+    m_prices.append(price.text)
+     
+ 
+# Exporting to CSV files
+ 
+data = {'mobiles':mobiles,'ratings':m_ratings,'prices':m_prices}
+ 
+df = pd.DataFrame(data=data)
+ 
+print(df.head())
+ 
+df.to_csv('mobile_data.csv',index=False)
+print('Success..!')
+ 
+ 
+# Exporting to JSON
+#d = json.dumps(data)
+#print(d)
+ 
+#l = json.loads(d)
+ 
+#with open('mobile_data.json','w') as f:
+#    f.write(d)
+#    f.close()
+     
+#print('Success..!')
